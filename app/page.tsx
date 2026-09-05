@@ -25,6 +25,7 @@ function playTone(sound: AlarmSound) {
 export default function Home() {
   const [schedules, setSchedules] = useState<Schedule[]>(sampleSchedules); const [user, setUser] = useState<User | null>(null); const [formOpen, setFormOpen] = useState(false); const [editing, setEditing] = useState<Schedule | null>(null); const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null); const [message, setMessage] = useState(""); const [authOpen, setAuthOpen] = useState(false);
   useEffect(() => { supabase.auth.getUser().then(({ data }) => setUser(data.user)); const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user ?? null)); return () => listener.subscription.unsubscribe(); }, []);
+  useEffect(() => { if (new URLSearchParams(window.location.search).get("new") === "1") setFormOpen(true); }, []);
   useEffect(() => { if (!user) return; supabase.from("schedules").select("*").order("schedule_date").order("start_time").then(({ data, error }) => { if (error) setMessage(`일정을 불러오지 못했습니다: ${error.message}`); else setSchedules((data as ScheduleRow[]).map(toSchedule)); }); }, [user]);
   const todaySchedules = useMemo(() => schedules.filter(s => s.date === today).sort((a, b) => a.startTime.localeCompare(b.startTime)), [schedules]);
   const openTasks = schedules.flatMap(s => s.tasks.filter(t => !t.completed).map(t => ({ ...t, schedule: s }))).slice(0, 3);
@@ -57,6 +58,7 @@ function ScheduleForm({ schedule, close, save }: { schedule: Schedule | null; cl
   const label = "block text-xs font-bold text-slate-600";
   const [mapService, setMapService] = useState<"naver" | "kakao">(schedule?.mapUrl.includes("map.kakao.com") ? "kakao" : "naver");
   useEffect(() => { const category = document.getElementById("schedule-category") as HTMLSelectElement | null; if (category) category.value = schedule?.category || "personal"; }, [schedule]);
+  useEffect(() => { if (schedule) return; const requestedDate = new URLSearchParams(window.location.search).get("date"); const dateInput = document.querySelector('input[name="date"]') as HTMLInputElement | null; if (requestedDate && dateInput) dateInput.value = requestedDate; }, [schedule]);
   function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
