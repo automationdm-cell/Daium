@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Premium() { return <main className="mx-auto min-h-screen max-w-[480px] bg-lilac-50 p-6 text-center"><p className="mt-20 text-5xl">✨</p><h1 className="mt-5 text-2xl font-black">프리미엄 상세 운세</h1><p className="mt-3 leading-6 text-slate-500">더 깊은 운세 콘텐츠가 준비 중입니다.</p><Link className="mt-8 inline-block rounded-xl bg-violet-500 px-5 py-3 font-bold text-white" href="/">오늘의 운세로 돌아가기</Link></main>; }

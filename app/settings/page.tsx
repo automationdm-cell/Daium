@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Settings() { return <main className="mx-auto min-h-screen max-w-[480px] bg-lilac-50 p-5"><Link href="/" className="text-sm font-bold text-violet-600">← 오늘</Link><h1 className="mt-4 text-2xl font-black">설정</h1><section className="mt-5 rounded-2xl bg-white p-4 shadow-sm"><h2 className="font-bold">알람 안내</h2><p className="mt-2 text-sm leading-6 text-slate-500">현재 버전의 알람은 이 웹앱이 열린 상태에서 동작합니다. 앱을 닫아도 알림을 받으려면 Firebase 푸시 알림 또는 안드로이드 앱 패키징이 필요합니다.</p></section></main>; }

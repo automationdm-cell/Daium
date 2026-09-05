@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+html { background: #ece9f7; }
+body { margin: 0; color: #302b41; background: #ece9f7; font-family: Arial, "Noto Sans KR", sans-serif; }
+button, input { font: inherit; }
