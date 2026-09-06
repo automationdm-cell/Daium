@@ -6,7 +6,7 @@ import { categoryLabel, occurrencesForDate, priorityLabel, Recurrence, sampleSch
 import { supabase } from "../lib/supabase";
 
 const now = new Date();
-const today = now.toISOString().slice(0, 10);
+const today = now.toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
 type CalendarRow = { id: string; title: string; schedule_date: string; end_date: string | null; start_time: string; end_time: string; priority: Schedule["priority"]; category: Schedule["category"]; recurrence: Recurrence; recurrence_end_date: string | null; people: string; location: string; transport: Schedule["transport"]; travel_minutes: number; memo: string; tasks: Schedule["tasks"] };
 const toSchedule = (row: CalendarRow): Schedule => ({ ...sampleSchedules[0], id: row.id, title: row.title, date: row.schedule_date, endDate: row.end_date || row.schedule_date, startTime: row.start_time.slice(0, 5), endTime: row.end_time.slice(0, 5), priority: row.priority, category: row.category || "personal", recurrence: row.recurrence || "none", recurrenceEndDate: row.recurrence_end_date || "", people: row.people || "", location: row.location || "", transport: row.transport, travelMinutes: row.travel_minutes || 0, memo: row.memo || "", tasks: row.tasks || [] });
 

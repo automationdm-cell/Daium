@@ -6,7 +6,7 @@ import { AlarmSound, Category, categoryLabel, categoryOptions, occurrencesForDat
 import { supabase } from "./lib/supabase";
 import { Contact } from "./lib/contacts";
 
-const today = new Date().toISOString().slice(0, 10);
+const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
 const makeId = () => Math.random().toString(36).slice(2, 10);
 const makeScheduleId = () => crypto.randomUUID();
 const priorityStyle: Record<Priority, string> = { low: "bg-slate-100 text-slate-500", normal: "bg-violet-100 text-violet-700", high: "bg-orange-100 text-orange-700", urgent: "bg-rose-100 text-rose-700" };
@@ -26,7 +26,7 @@ export default function Home() {
   const [schedules, setSchedules] = useState<Schedule[]>(sampleSchedules); const [user, setUser] = useState<User | null>(null); const [formOpen, setFormOpen] = useState(false); const [editing, setEditing] = useState<Schedule | null>(null); const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null); const [message, setMessage] = useState(""); const [authOpen, setAuthOpen] = useState(false);
   useEffect(() => { supabase.auth.getUser().then(({ data }) => setUser(data.user)); const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user ?? null)); return () => listener.subscription.unsubscribe(); }, []);
   useEffect(() => { if (new URLSearchParams(window.location.search).get("new") === "1") setFormOpen(true); }, []);
-  useEffect(() => { if (!user) return; supabase.from("schedules").select("*").order("schedule_date").order("start_time").then(({ data, error }) => { if (error) setMessage(`일정을 불러오지 못했습니다: ${error.message}`); else setSchedules((data as ScheduleRow[]).map(toSchedule)); }); }, [user]);
+  useEffect(() => { if (!user) return; const loadSchedules = () => { supabase.from("schedules").select("*").order("schedule_date").order("start_time").then(({ data, error }) => { if (error) setMessage(`일정을 불러오지 못했습니다: ${error.message}`); else setSchedules((data as ScheduleRow[]).map(toSchedule)); }); }; loadSchedules(); window.addEventListener("focus", loadSchedules); return () => window.removeEventListener("focus", loadSchedules); }, [user]);
   useEffect(() => { const editId = new URLSearchParams(window.location.search).get("edit"); const schedule = schedules.find(item => item.id === editId); if (schedule) { setEditing(schedule); setFormOpen(true); window.history.replaceState({}, "", "/"); } }, [schedules]);
   const todaySchedules = useMemo(() => occurrencesForDate(schedules, today).sort((a, b) => a.startTime.localeCompare(b.startTime)), [schedules]);
   const openTasks = schedules.flatMap(s => s.tasks.filter(t => !t.completed).map(t => ({ ...t, schedule: s }))).slice(0, 3);
